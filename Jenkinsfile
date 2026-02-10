@@ -1,19 +1,23 @@
-pipeline{
+pipeline {
     agent any
-    stages{
-        stage('Build'){
-            steps{
-                echo 'Building...'
+
+    stages {
+        stage('Build') {
+            agent {
+                docker {
+                    image 'node:18-alpine'
+                    reuseNode true
+                }
             }
-        }
-        stage('Test'){
-            steps{
-                echo 'Testing...'
-            }
-        }
-        stage('Deploy'){
-            steps{
-                echo 'Deploying...'
+            steps {
+                sh '''
+                    ls -la
+                    node --version
+                    npm --version
+                    npm ci
+                    npm run build
+                    ls -la
+                '''
             }
         }
     }
